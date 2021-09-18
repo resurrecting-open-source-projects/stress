@@ -1,13 +1,24 @@
 `stress' NEWS -- history of user-visible changes.
-Copyright (C) 2001-2008 Amos Waterland.
+Copyright (C) 2001-2010 Amos Waterland.
 See the end for copying conditions.
 
 Please send `stress' bug reports, questions, and suggestions to
 <apw@rossby.metr.ou.edu>.
 
+2010-02-17  Version 1.0.3
+
+ * Fix manpage problem reported by Mark Lumsden.  Remove --no-clean
+   option.
+
+2009-12-02  Version 1.0.2
+
+ * Fix AIX compile.  Apply patch from Wilken Gottwalt to make tee
+   behave properly.
+
 2009-08-11  Version 1.0.1
 
- * Minor automake cleanups.
+ * Minor automake cleanups.  Apply patch from Dileepa Prabhakar to
+   randomize slow writing. 
 
 2007-12-16  Version 1.0.0
 
@@ -90,7 +101,7 @@ Please send `stress' bug reports, questions, and suggestions to
 ----------------------------------------------------------------------
 Copyright information:
 
-Copyright (C) 2001-2008 Amos Waterland
+Copyright (C) 2001-2010 Amos Waterland
 
    Permission is granted to anyone to make or distribute verbatim copies
    of this document as received, in any medium, provided that the

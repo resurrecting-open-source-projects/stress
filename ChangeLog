@@ -1,4 +1,39 @@
+2010-03-19  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* configure.in, doc/version.texi: Up to version 1.0.4.
+
+	* src/stress.c: Fix unlink error reported by Farkas Levente.
+
+2010-03-17  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* src/stress.c: Make the error message on unlink fail more clear.
+
+2010-02-18  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS, doc/version.texi: Fix NEWS.
+
+	* configure.in, src/stress.c: Up to version 1.0.3.  Remove no-clean
+	option.
+
+2009-12-03  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS, configure.in, doc/version.texi: Up to version 1.0.2.
+
+	* src/Makefile.am: Remove Wall and Werror flags so we can build
+	on AIX with xlc.
+
+	* src/stress.c: Apply patch from Wilken Gottwalt to make tee
+	behave properly.
+
 2009-08-12  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS: Update the NEWS file.
+
+	* etc/deb/Makefile, etc/deb/debian/changelog, etc/deb/debian/control,
+	etc/deb/debian/rules: More changes for packaging.
+
+	* etc/deb/Makefile, etc/deb/debian/changelog, etc/deb/debian/control,
+	etc/deb/debian/rules: Changes for the purpose of packagin.
 
 	* doc/version.texi: Increase version.
 

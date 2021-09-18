@@ -1,6 +1,6 @@
 /* A program to put stress on a POSIX system (stress).
  *
- * Copyright (C) 2001,2002,2003,2004,2005,2006,2007
+ * Copyright (C) 2001,2002,2003,2004,2005,2006,2007,2008,2009,2010
  * Amos Waterland <apw@rossby.metr.ou.edu>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,18 +37,22 @@ static int global_debug = 2;
 static char *global_progname = PACKAGE;
 
 /* Implemention of runtime-selectable severity message printing.  */
-#define dbg if (global_debug >= 3) \
-            fprintf (stdout, "%s: dbug: [%lli] ", \
-                     global_progname, (long long)getpid()), fprintf
-#define out if (global_debug >= 2) \
-            fprintf (stdout, "%s: info: [%lli] ", \
-                     global_progname, (long long)getpid()), fprintf
-#define wrn if (global_debug >= 1) \
-            fprintf (stderr, "%s: WARN: [%lli] (%d) ", \
-                     global_progname, (long long)getpid(), __LINE__), fprintf
-#define err if (global_debug >= 0) \
-            fprintf (stderr, "%s: FAIL: [%lli] (%d) ", \
-                     global_progname, (long long)getpid(), __LINE__), fprintf
+#define dbg(OUT, STR, ARGS...) if (global_debug >= 3) \
+	fprintf (stdout, "%s: dbug: [%lli] ", \
+		global_progname, (long long)getpid()), \
+		fprintf(OUT, STR, ##ARGS), fflush(OUT)
+#define out(OUT, STR, ARGS...) if (global_debug >= 2) \
+	fprintf (stdout, "%s: info: [%lli] ", \
+		global_progname, (long long)getpid()), \
+		fprintf(OUT, STR, ##ARGS), fflush(OUT)
+#define wrn(OUT, STR, ARGS...) if (global_debug >= 1) \
+	fprintf (stderr, "%s: WARN: [%lli] (%d) ", \
+		global_progname, (long long)getpid(), __LINE__), \
+		fprintf(OUT, STR, ##ARGS), fflush(OUT)
+#define err(OUT, STR, ARGS...) if (global_debug >= 0) \
+	fprintf (stderr, "%s: FAIL: [%lli] (%d) ", \
+		global_progname, (long long)getpid(), __LINE__), \
+		fprintf(OUT, STR, ##ARGS), fflush(OUT)
 
 /* Implementation of check for option argument correctness.  */
 #define assert_arg(A) \
@@ -69,7 +73,7 @@ long long atoll_b (const char *nptr);
 int hogcpu (void);
 int hogio (void);
 int hogvm (long long bytes, long long stride, long long hang, int keep);
-int hoghdd (long long bytes, int clean);
+int hoghdd (long long bytes);
 
 int
 main (int argc, char **argv)
@@ -89,7 +93,6 @@ main (int argc, char **argv)
   long long do_vm_hang = -1;
   int do_vm_keep = 0;
   long long do_hdd = 0;
-  int do_hdd_clean = 2;
   long long do_hdd_bytes = 1024 * 1024 * 1024;
 
   /* Record our start time.  */
@@ -226,10 +229,6 @@ main (int argc, char **argv)
               exit (1);
             }
         }
-      else if (strcmp (arg, "--hdd-noclean") == 0)
-        {
-          do_hdd_clean = 0;
-        }
       else if (strcmp (arg, "--hdd-bytes") == 0)
         {
           assert_arg ("--hdd-bytes");
@@ -362,7 +361,7 @@ main (int argc, char **argv)
               usleep (backoff);
               if (do_dryrun)
                 exit (0);
-              exit (hoghdd (do_hdd_bytes, do_hdd_clean));
+              exit (hoghdd (do_hdd_bytes));
             case -1:           /* error */
               err (stderr, "fork failed: %s\n", strerror (errno));
               break;
@@ -516,14 +515,14 @@ hogvm (long long bytes, long long stride, long long hang, int keep)
         }
 
       for (i = 0; i < bytes; i += stride)
-	{
-           c = ptr[i];
-	   if (c != 'Z')
+        {
+          c = ptr[i];
+          if (c != 'Z')
             {
               err (stderr, "memory corruption at: %p\n", ptr + i);
               return 1;
             }
-	}
+        }
 
       if (do_malloc)
         {
@@ -536,7 +535,7 @@ hogvm (long long bytes, long long stride, long long hang, int keep)
 }
 
 int
-hoghdd (long long bytes, int clean)
+hoghdd (long long bytes)
 {
   long long i, j;
   int fd;
@@ -566,14 +565,12 @@ hoghdd (long long bytes, int clean)
         }
 
       dbg (stdout, "opened %s for writing %lli bytes\n", name, bytes);
-      if (clean == 2)
+
+      dbg (stdout, "unlinking %s\n", name);
+      if (unlink (name) == -1)
         {
-          dbg (stdout, "unlinking %s\n", name);
-          if (unlink (name) == -1)
-            {
-              err (stderr, "unlink failed: %s\n", strerror (errno));
-              return 1;
-            }
+          err (stderr, "unlink of %s failed: %s\n", name, strerror (errno));
+          return 1;
         }
 
       dbg (stdout, "fast writing to %s\n", name);
@@ -604,15 +601,6 @@ hoghdd (long long bytes, int clean)
 
       dbg (stdout, "closing %s after %lli bytes\n", name, j);
       close (fd);
-
-      if (clean == 1)
-        {
-          if (unlink (name))
-            {
-              err (stderr, "unlink failed: %s\n", strerror (errno));
-              return 1;
-            }
-        }
     }
 
   return 0;
@@ -761,11 +749,10 @@ usage (int status)
     " -m, --vm N         spawn N workers spinning on malloc()/free()\n"
     "     --vm-bytes B   malloc B bytes per vm worker (default is 256MB)\n"
     "     --vm-stride B  touch a byte every B bytes (default is 4096)\n"
-    "     --vm-hang N    sleep N secs before free (default is none, 0 is inf)\n"
+    "     --vm-hang N    sleep N secs before free (default none, 0 is inf)\n"
     "     --vm-keep      redirty memory instead of freeing and reallocating\n"
     " -d, --hdd N        spawn N workers spinning on write()/unlink()\n"
-    "     --hdd-bytes B  write B bytes per hdd worker (default is 1GB)\n"
-    "     --hdd-noclean  do not unlink files created by hdd workers\n\n"
+    "     --hdd-bytes B  write B bytes per hdd worker (default is 1GB)\n\n"
     "Example: %s --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 10s\n\n"
     "Note: Numbers may be suffixed with s,m,h,d,y (time) or B,K,M,G (size).\n";
 
