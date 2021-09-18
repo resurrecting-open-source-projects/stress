@@ -1,5 +1,5 @@
 MAINTAINERCLEANFILES = install-sh mkinstalldirs missing Makefile.in \
-                       aclocal.m4 configure COPYING Log.cvs ChangeLog
+                       aclocal.m4 configure COPYING Log.cvs ChangeLog depcomp
 EXTRA_DIST = ChangeLog
 
 SUBDIRS = . src doc test

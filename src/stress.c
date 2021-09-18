@@ -1,6 +1,6 @@
 /* A program to put stress on a POSIX system (stress).
  *
- * Copyright (C) 2001,2002,2003,2004,2005
+ * Copyright (C) 2001,2002,2003,2004,2005,2006,2007
  * Amos Waterland <apw@rossby.metr.ou.edu>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -68,7 +68,7 @@ long long atoll_b (const char *nptr);
 /* Prototypes for worker functions.  */
 int hogcpu (void);
 int hogio (void);
-int hogvm (long long bytes, int hang);
+int hogvm (long long bytes, long long stride, long long hang, int keep);
 int hoghdd (long long bytes, int clean);
 
 int
@@ -85,7 +85,9 @@ main (int argc, char **argv)
   long long do_io = 0;
   long long do_vm = 0;
   long long do_vm_bytes = 256 * 1024 * 1024;
-  int do_vm_hang = 0;
+  long long do_vm_stride = 4096;
+  long long do_vm_hang = -1;
+  int do_vm_keep = 0;
   long long do_hdd = 0;
   int do_hdd_clean = 2;
   long long do_hdd_bytes = 1024 * 1024 * 1024;
@@ -190,9 +192,29 @@ main (int argc, char **argv)
               exit (1);
             }
         }
+      else if (strcmp (arg, "--vm-stride") == 0)
+        {
+          assert_arg ("--vm-stride");
+          do_vm_stride = atoll_b (arg);
+          if (do_vm_stride <= 0)
+            {
+              err (stderr, "invalid stride value: %lli\n", do_vm_stride);
+              exit (1);
+            }
+        }
       else if (strcmp (arg, "--vm-hang") == 0)
         {
-          do_vm_hang = 1;
+          assert_arg ("--vm-hang");
+          do_vm_hang = atoll_b (arg);
+          if (do_vm_hang < 0)
+            {
+              err (stderr, "invalid value: %lli\n", do_vm_hang);
+              exit (1);
+            }
+        }
+      else if (strcmp (arg, "--vm-keep") == 0)
+        {
+          do_vm_keep = 1;
         }
       else if (strcmp (arg, "--hdd") == 0 || strcmp (arg, "-d") == 0)
         {
@@ -264,7 +286,7 @@ main (int argc, char **argv)
             }
           else
             {
-              dbg (stdout, "used up time before all workers dispatched\n");
+              wrn (stderr, "used up time before all workers dispatched\n");
               break;
             }
         }
@@ -319,7 +341,8 @@ main (int argc, char **argv)
               usleep (backoff);
               if (do_dryrun)
                 exit (0);
-              exit (hogvm (do_vm_bytes, do_vm_hang));
+              exit (hogvm
+                    (do_vm_bytes, do_vm_stride, do_vm_hang, do_vm_keep));
             case -1:           /* error */
               err (stderr, "fork failed: %s\n", strerror (errno));
               break;
@@ -455,34 +478,58 @@ hogio ()
 }
 
 int
-hogvm (long long bytes, int hang)
+hogvm (long long bytes, long long stride, long long hang, int keep)
 {
   long long i;
-  char *ptr;
+  char *ptr = 0;
+  char c;
+  int do_malloc = 1;
 
   while (1)
     {
-      dbg (stdout, "allocating %lli bytes ...\n", bytes);
-      if ((ptr = (char *) malloc (bytes * sizeof (char))))
+      if (do_malloc)
         {
-          for (i = 0; i < bytes; i++)
-            ptr[i] = 'Z';       /* Ensure that COW happens.  */
-        }
-      else
-        {
-          err (stderr, "hogvm malloc failed: %s\n", strerror (errno));
-          return 1;
+          dbg (stdout, "allocating %lli bytes ...\n", bytes);
+          if (!(ptr = (char *) malloc (bytes * sizeof (char))))
+            {
+              err (stderr, "hogvm malloc failed: %s\n", strerror (errno));
+              return 1;
+            }
+          if (keep)
+            do_malloc = 0;
         }
 
-      if (hang)
+      dbg (stdout, "touching bytes in strides of %lli bytes ...\n", stride);
+      for (i = 0; i < bytes; i += stride)
+        ptr[i] = 'Z';           /* Ensure that COW happens.  */
+
+      if (hang == 0)
         {
           dbg (stdout, "sleeping forever with allocated memory\n");
           while (1)
             sleep (1024);
         }
+      else if (hang > 0)
+        {
+          dbg (stdout, "sleeping for %llis with allocated memory\n", hang);
+          sleep (hang);
+        }
 
-      free (ptr);
-      dbg (stdout, "freed %lli bytes\n", bytes);
+      for (i = 0; i < bytes; i += stride)
+	{
+           c = ptr[i];
+	   if (c != 'Z')
+            {
+              err (stderr, "memory corruption at: %p\n", ptr + i);
+              return 1;
+            }
+	}
+
+      if (do_malloc)
+        {
+          free (ptr);
+          dbg (stdout, "freed %lli bytes\n", bytes);
+        }
     }
 
   return 0;
@@ -542,7 +589,7 @@ hoghdd (long long bytes, int clean)
       dbg (stdout, "slow writing to %s\n", name);
       for (; bytes == 0 || j < bytes - 1; j++)
         {
-          if (write (fd, "Z", 1) == -1)
+          if (write (fd, &buff[j % chunk], 1) == -1)
             {
               err (stderr, "write failed: %s\n", strerror (errno));
               return 1;
@@ -662,7 +709,7 @@ atoll_s (const char *nptr)
       break;
     case 'y':
     case 'Y':
-      factor = 60 * 60 * 24 * 360;
+      factor = 60 * 60 * 24 * 365;
       break;
     default:
       if (suffix < '0' || suffix > '9')
@@ -702,21 +749,23 @@ usage (int status)
   char *mesg =
     "`%s' imposes certain types of compute stress on your system\n\n"
     "Usage: %s [OPTION [ARG]] ...\n"
-    " -?, --help            show this help statement\n"
-    "     --version         show version statement\n"
-    " -v, --verbose         be verbose\n"
-    " -q, --quiet           be quiet\n"
-    " -n, --dry-run         show what would have been done\n"
-    " -t, --timeout N       timeout after N seconds\n"
-    "     --backoff N       wait factor of N microseconds before work starts\n"
-    " -c, --cpu N           spawn N workers spinning on sqrt()\n"
-    " -i, --io N            spawn N workers spinning on sync()\n"
-    " -m, --vm N            spawn N workers spinning on malloc()/free()\n"
-    "     --vm-bytes B      malloc B bytes per vm worker (default is 256MB)\n"
-    "     --vm-hang         do not free memory allocated by vm workers\n"
-    " -d, --hdd N           spawn N workers spinning on write()/unlink()\n"
-    "     --hdd-bytes B     write B bytes per hdd worker (default is 1GB)\n"
-    "     --hdd-noclean     do not unlink files created by hdd workers\n\n"
+    " -?, --help         show this help statement\n"
+    "     --version      show version statement\n"
+    " -v, --verbose      be verbose\n"
+    " -q, --quiet        be quiet\n"
+    " -n, --dry-run      show what would have been done\n"
+    " -t, --timeout N    timeout after N seconds\n"
+    "     --backoff N    wait factor of N microseconds before work starts\n"
+    " -c, --cpu N        spawn N workers spinning on sqrt()\n"
+    " -i, --io N         spawn N workers spinning on sync()\n"
+    " -m, --vm N         spawn N workers spinning on malloc()/free()\n"
+    "     --vm-bytes B   malloc B bytes per vm worker (default is 256MB)\n"
+    "     --vm-stride B  touch a byte every B bytes (default is 4096)\n"
+    "     --vm-hang N    sleep N secs before free (default is none, 0 is inf)\n"
+    "     --vm-keep      redirty memory instead of freeing and reallocating\n"
+    " -d, --hdd N        spawn N workers spinning on write()/unlink()\n"
+    "     --hdd-bytes B  write B bytes per hdd worker (default is 1GB)\n"
+    "     --hdd-noclean  do not unlink files created by hdd workers\n\n"
     "Example: %s --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 10s\n\n"
     "Note: Numbers may be suffixed with s,m,h,d,y (time) or B,K,M,G (size).\n";
 

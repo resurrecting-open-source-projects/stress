@@ -1,4 +1,110 @@
+2009-08-12  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* doc/version.texi: Increase version.
+
+	* NEWS, configure.in: Up to version 1.0.1
+
+	* src/stress.c: Apply patch from Dileepa Prabhakar to randomize
+	slow writing.
+
+	* Makefile.am, src/Makefile.am: Small cleanups for automake.
+
+	* src/stress.c: Initialize pointer.
+
+2008-05-30  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* FAQ, README: Add FAQ and modify README.
+
+2007-12-17  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS, README, configure.in, doc/version.texi: Up to version 1.0.0.
+
+2007-12-15  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* src/stress.c: Add check for memory corruption.
+
+2007-01-25  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* etc/deb/debian/control: Change priority from optional to extra.
+
+2007-01-23  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* TODO: Add build standalone.
+
+	* TODO: Add note about option directions.
+
+	* doc/version.texi, etc/deb/Makefile, etc/deb/debian/changelog:
+	Up to version 0.18.9
+
+2007-01-18  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* configure.in, etc/deb/Makefile, etc/deb/debian/changelog,
+	etc/deb/debian/control, etc/deb/debian/rules: Up to version 0.18.9.
+
+	* doc/Makefile.am: Make a better apropos message for manpage.
+
+2005-12-08  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS, doc/version.texi: Add entry for 0.18.8 release.
+
+	* configure.in: Up version to 0.18.8.
+
+	* src/stress.c: Apply patch from Richard Norton to fix calculation
+	of timeouts with year suffixes.
+
+	* AUTHORS: Add Richard Norton to list of patch contributors.
+
+2005-08-09  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* etc/deb/Makefile, etc/deb/debian/changelog, etc/deb/debian/control:
+	Fixes for version 0.18.6.
+
+2005-07-03  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* src/stress.c: Apply modified patch from Bob Paulsen to add the
+	option to keep memory instead of freeing and reallocating it.
+
+2005-06-30  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS: Add note for version 0.18.6.
+
+2005-06-27  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* configure.in: Up to version 0.18.6.
+
+	* src/stress.c: Use less whitespace for help statement indents.
+	Fix help statement for --vm-hang option.
+
+	* configure.in: Increment to version 0.18.5.
+
+	* AUTHORS: Add Bob Paulsen.
+
+	* src/stress.c: Add option to stride through memory in increments
+	other than unity.  Modify option to hang after allocating memory
+	to support values other than infinity.
+
+2005-06-04  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* src/stress.c: Make message about using up time before all workers
+	dispatched a warning instead of a debug.
+
+2005-05-29  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* TODO: Explain about removing the --backoff option.
+
+	* TODO: Initial checkin.
+
+2005-04-08  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* NEWS: Add entry for version 0.18.4
+
 2005-03-10  Amos Waterland  <apw@rossby.metr.ou.edu>
+
+	* etc/deb/debian/changelog: Update to version 0.18.4-1.
+
+	* etc/deb/Makefile: Update to version 0.18.4.
+
+	* bootstrap: Do not specify version of autoconf.
 
 	* configure.in: Increment to version 0.18.4.
 
