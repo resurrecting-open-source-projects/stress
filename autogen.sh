@@ -34,9 +34,9 @@
 if [ "$1" = "clean" -a ! -e Makefile ]
 then
     echo "Vanishing the code"
-    rm -rf aclocal.m4 autom4te.cache compile configure depcomp doc/Makefile.in \
-           INSTALL install-sh Makefile.in missing src/Makefile.in test-driver \
-           test/Makefile.in
+    rm -rf aclocal.m4 autom4te.cache compile config.* configure depcomp \
+           doc/Makefile.in INSTALL install-sh Makefile.in missing \
+           src/Makefile.in test-driver test/Makefile.in
     exit 0
 fi
 
