@@ -1,0 +1,35 @@
+name: full-check
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: first_build
+      run: |
+           ./autogen.sh
+           ./configure
+           make
+           make clean
+           make
+           sudo make install
+           sudo make uninstall
+           make distclean
+    - name: second_build
+      run: |
+           ./autogen.sh
+           ./configure
+           make
+           sudo make install
+    - name: run_program
+      run: |
+           stress
+           stress --vm 2 -t 1
+    - name: test_CI
+      run: |
+           sudo make uninstall
+           make check
