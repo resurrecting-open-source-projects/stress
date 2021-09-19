@@ -1,0 +1,77 @@
+NAME
+ stress - tool to impose load on and stress test a computer system
+
+SYNOPSIS
+ stress [OPTIONS]
+
+DESCRIPTION
+ stress is a tool that imposes a configurable amount of CPU, memory, I/O,
+ or disk stress on a POSIX-compliant operating system and reports any errors
+ it detects.
+
+ stress is not a benchmark. It is a tool used by system administrators to
+ evaluate how well their systems will scale, by kernel programmers to evaluate
+ perceived performance characteristics, and by systems programmers to expose
+ the classes of bugs which only or more frequently manifest themselves when
+ the system is under heavy load.
+
+OPTIONS
+ -?, --help         Show this help statement.
+ --version          Show version statement.
+ -v, --verbose      Be verbose.
+ -q, --quiet        Be quiet.
+ -n, --dry-run      Show what would have been done.
+ -t, --timeout <N>  Timeout after N seconds.
+ --backoff <N>      Wait for factor of microseconds before starting work.
+ -c, --cpu <N>      Spawn N workers spinning on sqrt().
+ -i, --io <N>       Spawn N workers spinning on sync().
+ -m, --vm <N>       Spawn N workers spinning on malloc()/free().
+ --vm-bytes <B>     Malloc B bytes per vm worker (default is 256MB).
+ --vm-stride <B>    Touch a byte every B bytes (default is 4096).
+ --vm-hang <N>      Sleep N secs before free (default none, 0 is inf).
+ --vm-keep          Redirty memory instead of freeing and reallocating.
+ -d, --hdd <N>      Spawn N workers spinning on write()/unlink().
+ --hdd-bytes <B>    Write B bytes per hdd worker (default is 1GB).
+
+ Note: Numbers may be suffixed with s,m,h,d,y (time) or B,K,M,G (size).
+
+EXAMPLES
+ The simple case is that you just want to bring the system load average up to an
+ arbitrary value. The following forks 13 processes, each of which spins in a
+ tight loop calculating the sqrt() of a random number acquired with rand().
+
+    stress -c 13
+
+ Long options are supported, as well as is making the output less verbose. The
+ following forks 1024 processes,and only reports error messages if any.
+
+    stress --quiet --cpu 1k
+
+ To see how your system performs when it is I/O bound, use the -i switch. The
+ following forks 4 processes, each of which spins in a tight loop calling
+ sync(), which is a system call that flushes memory buffers to disk.
+
+    stress -i 4
+
+ Multiple hogs may be combined on the same command line. The following does
+ everything the preceding examples did in one command, but also turns up the
+ verbosity level as well as showing how to cause the command to self-terminate
+ after 1 minute.
+
+    stress -c 13 -i 4 --verbose --timeout 1m
+
+ You can write a file of arbitrary length to disk. The file is created with
+ mkstemp() in the current directory.
+
+    stress -d 1 --hdd-bytes 13
+
+    Large file support is enabled.
+
+    stress -d 1 --hdd-bytes 3G
+
+AUTHOR
+ stress was originally developed by Amos Waterland <apw@debian.org> and
+ is maintained by some people.
+
+ Currently, source code and newer versions are available at
+ https://github.com/resurrecting-open-source-projects/stress
