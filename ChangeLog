@@ -1,3 +1,13 @@
+2021-10-01  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.0.5
+
+  * Added CI test for GitHub.
+  * Migrated manpage system to txt2man.
+  * Modernized system install.
+  * Set right permissions to source code.
+  * Updated README and added a CONTRIBUTING file.
+  * Other minor changes and improvements.
+
 2010-03-19  Amos Waterland  <apw@rossby.metr.ou.edu>
 Version 1.0.4
 
@@ -37,7 +47,7 @@ Version 1.0.1
 	etc/deb/debian/rules: More changes for packaging.
 
 	* etc/deb/Makefile, etc/deb/debian/changelog, etc/deb/debian/control,
-	etc/deb/debian/rules: Changes for the purpose of packagin.
+	etc/deb/debian/rules: Changes for the purpose of packaging.
 
 	* doc/version.texi: Increase version.
 
@@ -382,7 +392,7 @@ Version 0.17pre18
 
 2003-04-12  Amos Waterland  <apw@rossby.metr.ou.edu>
 
-	* configure.in: Uped version.
+	* configure.in: Upped version.
 
 	* configure.in, doc/stress.texi, doc/version.texi: Minor changes.
 
@@ -436,7 +446,7 @@ Version 0.17pre18
 
 	* src/stress.c: Removed the hog prefix from switches.
 
-	* test/check_hogcpu: Minor chnages.
+	* test/check_hogcpu: Minor changes.
 
 	* src/stress.c: Removed bogus timeout > backoff stuff.
 
