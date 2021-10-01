@@ -46,7 +46,7 @@ Show what would have been done.
 .TP
 .B
 \fB-t\fP, \fB--timeout\fP <N>
-Timeout after N seconds.
+Timeout after N seconds. This option is ignored by \fB-n\fP.
 .TP
 .B
 \fB--backoff\fP <N>
@@ -86,7 +86,8 @@ Spawn N workers spinning on \fBwrite\fP()/unlink().
 .TP
 .B
 \fB--hdd-bytes\fP <B>
-Write B bytes per hdd worker (default is 1GB).
+Write B bytes per hdd worker (default is 1GB). The file
+will be created with \fBmkstemp\fP() in the current directory.
 .PP
 Note: Numbers may be suffixed with s,m,h,d,y (time) or B,K,M,G (size).
 .SH EXAMPLES
@@ -101,7 +102,7 @@ tight loop calculating the \fBsqrt\fP() of a random number acquired with \fBrand
 .fam T
 .fi
 Long options are supported, as well as is making the output less verbose. The
-following forks 1024 processes,and only reports error messages if any.
+following forks 1024 processes, and only reports error messages if any.
 .PP
 .nf
 .fam C
@@ -145,7 +146,7 @@ You can write a file of arbitrary length to disk. The file is created with
 .fi
 .SH AUTHOR
 \fBstress\fP was originally developed by Amos Waterland <apw@debian.org> and
-is maintained by some people.
+is maintained by some volunteers.
 .PP
 Currently, source code and newer versions are available at
 https://github.com/resurrecting-open-source-projects/\fBstress\fP

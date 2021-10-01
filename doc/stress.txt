@@ -21,7 +21,7 @@ OPTIONS
  -v, --verbose      Be verbose.
  -q, --quiet        Be quiet.
  -n, --dry-run      Show what would have been done.
- -t, --timeout <N>  Timeout after N seconds.
+ -t, --timeout <N>  Timeout after N seconds. This option is ignored by -n.
  --backoff <N>      Wait for factor of microseconds before starting work.
  -c, --cpu <N>      Spawn N workers spinning on sqrt().
  -i, --io <N>       Spawn N workers spinning on sync().
@@ -31,7 +31,8 @@ OPTIONS
  --vm-hang <N>      Sleep N secs before free (default none, 0 is inf).
  --vm-keep          Redirty memory instead of freeing and reallocating.
  -d, --hdd <N>      Spawn N workers spinning on write()/unlink().
- --hdd-bytes <B>    Write B bytes per hdd worker (default is 1GB).
+ --hdd-bytes <B>    Write B bytes per hdd worker (default is 1GB). The file
+                    will be created with mkstemp() in the current directory.
 
  Note: Numbers may be suffixed with s,m,h,d,y (time) or B,K,M,G (size).
 
@@ -43,7 +44,7 @@ EXAMPLES
     stress -c 13
 
  Long options are supported, as well as is making the output less verbose. The
- following forks 1024 processes,and only reports error messages if any.
+ following forks 1024 processes, and only reports error messages if any.
 
     stress --quiet --cpu 1k
 
@@ -71,7 +72,7 @@ EXAMPLES
 
 AUTHOR
  stress was originally developed by Amos Waterland <apw@debian.org> and
- is maintained by some people.
+ is maintained by some volunteers.
 
  Currently, source code and newer versions are available at
  https://github.com/resurrecting-open-source-projects/stress
