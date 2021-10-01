@@ -1,4 +1,5 @@
 2010-03-19  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 1.0.4
 
 	* configure.in, doc/version.texi: Up to version 1.0.4.
 
@@ -9,6 +10,7 @@
 	* src/stress.c: Make the error message on unlink fail more clear.
 
 2010-02-18  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 1.0.3
 
 	* NEWS, doc/version.texi: Fix NEWS.
 
@@ -16,6 +18,7 @@
 	option.
 
 2009-12-03  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 1.0.2
 
 	* NEWS, configure.in, doc/version.texi: Up to version 1.0.2.
 
@@ -26,6 +29,7 @@
 	behave properly.
 
 2009-08-12  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 1.0.1
 
 	* NEWS: Update the NEWS file.
 
@@ -51,6 +55,7 @@
 	* FAQ, README: Add FAQ and modify README.
 
 2007-12-17  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 1.0.0
 
 	* NEWS, README, configure.in, doc/version.texi: Up to version 1.0.0.
 
@@ -100,6 +105,7 @@
 	option to keep memory instead of freeing and reallocating it.
 
 2005-06-30  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.18.6
 
 	* NEWS: Add note for version 0.18.6.
 
@@ -130,6 +136,7 @@
 	* TODO: Initial checkin.
 
 2005-04-08  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.18.4
 
 	* NEWS: Add entry for version 0.18.4
 
@@ -203,6 +210,7 @@
 	Print more debugging messages during vm and hdd work.
 
 2004-11-18  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.18.2
 
 	* etc/rpm/Makefile, etc/rpm/SPECS/stress.spec: Increment version
 	to 0.18.2.
@@ -241,6 +249,7 @@
 	* ChangeLog, src/stress.c: Include b in list of valid suffixes.
 
 2003-08-04  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.18.1
 
 	* ChangeLog: Add entries.
 
@@ -314,10 +323,12 @@
 	Original patch contributed by David Ranch <dranch@juniper.net>.
 
 2003-05-25  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.17
 
 	* configure.in: Up version.
 
 2003-05-08  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.17pre20
 
 	* doc/Makefile.am, doc/version.texi: Minor change.
 
@@ -352,6 +363,7 @@
 	* configure.in: Up version.
 
 2003-05-06  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.17pre18
 
 	* src/stress.c: (atoll_b) Use shift instead of multiply for speed.
 	Original patch contributed by Wes Hofmann <whofmann@yahoo.com>.
@@ -446,6 +458,7 @@
 	changes.
 
 2002-12-10  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.17pre10
 
 	* test/Makefile.am, test/check_hoghdd: Added file.
 
@@ -471,6 +484,7 @@
 	kill each process leader timeout implementation.
 
 2002-12-08  Amos Waterland  <apw@rossby.metr.ou.edu>
+Version 0.17pre8
 
 	* AUTHORS, ChangeLog, doc/stress.1, src/stress.c: Changed email
 	address.
