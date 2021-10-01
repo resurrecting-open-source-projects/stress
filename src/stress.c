@@ -1,7 +1,7 @@
 /* A program to put stress on a POSIX system (stress).
  *
- * Copyright (C) 2001,2002,2003,2004,2005,2006,2007,2008,2009,2010
- * Amos Waterland <apw@rossby.metr.ou.edu>
+ * Copyright 2001-2010 Amos Waterland <apw@rossby.metr.ou.edu>
+ * Copyright 2021      Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
