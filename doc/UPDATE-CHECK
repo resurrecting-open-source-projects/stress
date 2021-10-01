@@ -1,0 +1,11 @@
+When updating (if needed):
+
+- Update rights
+- Update changeLog
+- Check for spelling errors in ChangeLog, manpage and README.
+- Update man/create-man.sh (DATE, version)
+- Generate a new manpage.
+- Check final manpage with man command.
+- Updated or check README
+- configure.ac (VERSION)
+- Test in Debian Sid
