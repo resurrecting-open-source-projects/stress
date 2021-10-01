@@ -16,7 +16,7 @@ txt2man -d "$T2M_DATE" -t $T2M_NAME -r $T2M_NAME-$T2M_VERSION -s $T2M_LEVEL -v "
 #--------------------------------------------------------
 
 # Put here all data for your first manpage (in T2M lines)
-T2M_DATE="20 Sep 2021"
+T2M_DATE="01 Oct 2021"
 T2M_NAME=stress
 T2M_VERSION=1.0.5
 T2M_LEVEL=1
