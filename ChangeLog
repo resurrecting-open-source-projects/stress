@@ -1,3 +1,15 @@
+2023-01-17  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.0.6
+
+  [ Vratislav Bendel ]
+  * Register parent termination signal in child processes.
+
+  [ Joao Eriberto Mota Filho ]
+  * Added 'make dist' check in CI test.
+  * Added rights for Vratislav Bendel.
+  * Re-organized src/stress.c via astyle command.
+  * Updated GPL-2 license text for src/stress.c.
+
 2021-10-01  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.0.5
 
