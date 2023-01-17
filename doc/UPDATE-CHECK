@@ -9,3 +9,4 @@ When updating (if needed):
 - Updated or check README
 - configure.ac (VERSION)
 - Test in Debian Sid
+- Release bootstrapped tarballs with make dist.
