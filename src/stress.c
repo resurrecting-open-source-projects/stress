@@ -2,6 +2,7 @@
  *
  * Copyright 2001-2010 Amos Waterland <apw@rossby.metr.ou.edu>
  * Copyright 2021      Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+ * Copyright 2023      Vratislav Bendel <vbendel@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
