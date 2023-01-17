@@ -29,7 +29,23 @@ jobs:
       run: |
            stress
            stress --vm 2 -t 1
-    - name: test_CI
+    - name: test_make_dist
       run: |
+           make distclean
+           ./autogen.sh
+           ./configure
+           make dist
+           mkdir test_dist
+           mv stress-*.tar.gz test_dist
+           cd test_dist
+           pwd
+           tar -xvf stress-*.tar.gz
+           rm -f stress-*.tar.gz
+           cd stress-*
+           ./autogen.sh
+           ./configure
+           make
+           ls
+           sudo make install
            sudo make uninstall
-           make check
+           make distclean
