@@ -28,6 +28,7 @@
 #include <signal.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/prctl.h>
 #include <sys/wait.h>
 #include "config.h"
 
@@ -296,6 +297,8 @@ main (int argc, char **argv)
           switch (pid = fork ())
             {
             case 0:            /* child */
+              if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
+                exit(0);
               alarm (timeout);
               usleep (backoff);
               if (do_dryrun)
@@ -317,6 +320,8 @@ main (int argc, char **argv)
           switch (pid = fork ())
             {
             case 0:            /* child */
+              if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
+                exit(0);
               alarm (timeout);
               usleep (backoff);
               if (do_dryrun)
@@ -337,6 +342,8 @@ main (int argc, char **argv)
           switch (pid = fork ())
             {
             case 0:            /* child */
+              if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
+                exit(0);
               alarm (timeout);
               usleep (backoff);
               if (do_dryrun)
@@ -358,6 +365,8 @@ main (int argc, char **argv)
           switch (pid = fork ())
             {
             case 0:            /* child */
+              if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
+                exit(0);
               alarm (timeout);
               usleep (backoff);
               if (do_dryrun)
