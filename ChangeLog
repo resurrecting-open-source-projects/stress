@@ -1,3 +1,16 @@
+2023-01-21  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.0.7
+
+  [ Vratislav Bendel ]
+  * Check for sys/prctl.h availibility, because non-Linux
+    architectures don't provide <sys/prctl.h>.
+
+  [ Joao Eriberto Mota Filho ]
+  * Improved GitHub CI:
+      - Added CI test for macOS.
+      - Added a check for stress command.
+      - Added a test for 'make dist-bzip2'.
+
 2023-01-17  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.0.6
 
