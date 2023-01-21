@@ -10,6 +10,7 @@ Version 1.0.7
       - Added CI test for macOS.
       - Added a check for stress command.
       - Added a test for 'make dist-bzip2'.
+  * Moved manpage from doc/ to man/.
 
 2023-01-17  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.0.6
