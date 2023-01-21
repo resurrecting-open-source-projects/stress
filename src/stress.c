@@ -29,9 +29,12 @@
 #include <signal.h>
 #include <time.h>
 #include <unistd.h>
-#include <sys/prctl.h>
 #include <sys/wait.h>
 #include "config.h"
+
+#ifdef HAVE_SYS_PRCTL_H
+  #include <sys/prctl.h>
+#endif
 
 /* By default, print all messages of severity info and above.  */
 static int global_debug = 2;
@@ -71,6 +74,7 @@ int usage (int status);
 int version (int status);
 long long atoll_s (const char *nptr);
 long long atoll_b (const char *nptr);
+void worker_init(void);
 
 /* Prototypes for worker functions.  */
 int hogcpu (void);
@@ -298,8 +302,7 @@ main (int argc, char **argv)
             switch (pid = fork ())
             {
             case 0:            /* child */
-                if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
-                    exit(0);
+                worker_init();
                 alarm (timeout);
                 usleep (backoff);
                 if (do_dryrun)
@@ -321,8 +324,7 @@ main (int argc, char **argv)
             switch (pid = fork ())
             {
             case 0:            /* child */
-                if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
-                    exit(0);
+                worker_init();
                 alarm (timeout);
                 usleep (backoff);
                 if (do_dryrun)
@@ -343,14 +345,12 @@ main (int argc, char **argv)
             switch (pid = fork ())
             {
             case 0:            /* child */
-                if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
-                    exit(0);
+                worker_init();
                 alarm (timeout);
                 usleep (backoff);
                 if (do_dryrun)
                     exit (0);
-                exit (hogvm
-                      (do_vm_bytes, do_vm_stride, do_vm_hang, do_vm_keep));
+                exit (hogvm (do_vm_bytes, do_vm_stride, do_vm_hang, do_vm_keep));
             case -1:           /* error */
                 err (stderr, "fork failed: %s\n", strerror (errno));
                 break;
@@ -366,8 +366,7 @@ main (int argc, char **argv)
             switch (pid = fork ())
             {
             case 0:            /* child */
-                if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
-                    exit(0);
+                worker_init();
                 alarm (timeout);
                 usleep (backoff);
                 if (do_dryrun)
@@ -467,6 +466,14 @@ main (int argc, char **argv)
     }
 
     exit (retval);
+}
+
+void worker_init(void)
+{
+#ifdef HAVE_SYS_PRCTL_H
+    if (prctl(PR_SET_PDEATHSIG, SIGTERM) == -1)
+        exit(0);
+#endif
 }
 
 int
