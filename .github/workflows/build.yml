@@ -22,7 +22,7 @@ jobs:
     - name: run_program
       run: |
            stress
-           stress --vm 2 -t 2
+           stress --vm 2 -t 2 | grep "2 vm" -C2
     - name: uninstall_distclean
       run: |
            sudo make uninstall
@@ -53,7 +53,7 @@ jobs:
     - name: run_program
       run: |
            stress
-           stress --vm 2 -t 1
+           stress --vm 2 -t 1 | grep "2 vm" -C2
     - name: test_make_dist
       run: |
            make distclean
