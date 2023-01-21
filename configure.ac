@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([stress], [1.0.6], [https://github.com/resurrecting-open-source-projects/stress/issues])
+AC_INIT([stress], [1.0.7], [https://github.com/resurrecting-open-source-projects/stress/issues])
 AC_CONFIG_SRCDIR([src/stress.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
