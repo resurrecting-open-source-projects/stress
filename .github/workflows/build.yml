@@ -5,9 +5,7 @@ on: [push, pull_request]
 jobs:
 
   build-macOS:
-
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: build
@@ -29,9 +27,7 @@ jobs:
            make distclean
 
   build-linux:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: first_build
@@ -54,9 +50,12 @@ jobs:
       run: |
            stress
            stress --vm 2 -t 1 | grep "2 vm" -C2
+    - name: pre-clean
+      run: |
+           sudo make uninstall
+           make distclean
     - name: test_make_dist
       run: |
-           make distclean
            ./autogen.sh
            ./configure
            make dist
@@ -66,6 +65,27 @@ jobs:
            pwd
            tar -xvf stress-*.tar.gz
            rm -f stress-*.tar.gz
+           cd stress-*
+           ./autogen.sh
+           ./configure
+           make
+           ls
+           sudo make install
+           sudo make uninstall
+           make distclean
+           cd ../..
+           rm -rf test_dist
+    - name: test_make_dist-bzip2
+      run: |
+           ./autogen.sh
+           ./configure
+           make dist-bzip2
+           mkdir test_dist
+           mv stress-*.tar.bz2 test_dist
+           cd test_dist
+           pwd
+           tar -xvf stress-*.tar.bz2
+           rm -f stress-*.tar.bz2
            cd stress-*
            ./autogen.sh
            ./configure
