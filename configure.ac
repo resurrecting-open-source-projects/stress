@@ -14,7 +14,6 @@ AC_CHECK_HEADERS([stdlib.h string.h unistd.h sys/prctl.h])
 
 # Checks for library functions.
 AC_FUNC_FORK
-AC_FUNC_MALLOC
 AC_CHECK_FUNCS([alarm sqrt strerror])
 
 # Special functions
