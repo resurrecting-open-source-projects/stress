@@ -79,7 +79,7 @@ void worker_init(void);
 /* Prototypes for worker functions.  */
 int hogcpu (void);
 int hogio (void);
-int hogvm (long long bytes, long long stride, long long hang, int keep);
+int hogvm (long long bytes, long long stride, long long hang, int keep, int spin);
 int hoghdd (long long bytes);
 
 int
@@ -87,6 +87,8 @@ main (int argc, char **argv)
 {
     int i, pid, children = 0, retval = 0;
     long starttime, stoptime, runtime, forks;
+    long long progress;
+    FILE *f;
 
     /* Variables that indicate which options have been selected.  */
     int do_dryrun = 0;
@@ -98,6 +100,7 @@ main (int argc, char **argv)
     long long do_vm_bytes = 256 * 1024 * 1024;
     long long do_vm_stride = 4096;
     long long do_vm_hang = -1;
+    int do_vm_spin = 1;
     int do_vm_keep = 0;
     long long do_hdd = 0;
     long long do_hdd_bytes = 1024 * 1024 * 1024;
@@ -226,6 +229,10 @@ main (int argc, char **argv)
         {
             do_vm_keep = 1;
         }
+        else if (strcmp (arg, "--vm-no-spin") == 0)
+        {
+            do_vm_spin = 0;
+        }
         else if (strcmp (arg, "--hdd") == 0 || strcmp (arg, "-d") == 0)
         {
             assert_arg ("--hdd");
@@ -258,6 +265,13 @@ main (int argc, char **argv)
     {
         out (stdout, "dispatching hogs: %lli cpu, %lli io, %lli vm, %lli hdd\n",
              do_cpu, do_io, do_vm, do_hdd);
+    }
+    else if (f = fopen("stress.progress", "r"))
+    {
+    	fscanf(f, "%lli", &progress);
+    	out (stdout, "Previous run was able to write %llim before termination\n", progress / 1024 / 1024);
+    	remove("stress.progress");
+        return 0;
     }
     else
         usage (0);
@@ -350,7 +364,7 @@ main (int argc, char **argv)
                 usleep (backoff);
                 if (do_dryrun)
                     exit (0);
-                exit (hogvm (do_vm_bytes, do_vm_stride, do_vm_hang, do_vm_keep));
+                exit (hogvm (do_vm_bytes, do_vm_stride, do_vm_hang, do_vm_keep, do_vm_spin));
             case -1:           /* error */
                 err (stderr, "fork failed: %s\n", strerror (errno));
                 break;
@@ -495,12 +509,13 @@ hogio ()
 }
 
 int
-hogvm (long long bytes, long long stride, long long hang, int keep)
+hogvm (long long bytes, long long stride, long long hang, int keep, int spin)
 {
-    long long i;
+    long long i, j;
     char *ptr = 0;
     char c;
     int do_malloc = 1;
+    FILE *f;
 
     while (1)
     {
@@ -517,8 +532,21 @@ hogvm (long long bytes, long long stride, long long hang, int keep)
         }
 
         dbg (stdout, "touching bytes in strides of %lli bytes ...\n", stride);
-        for (i = 0; i < bytes; i += stride)
+        f = fopen("stress.progress", "w");
+        for (i = 0; i < bytes; i += stride, j += stride)
+        {
             ptr[i] = 'Z';           /* Ensure that COW happens.  */
+              
+            // save progress and flush regularly  if everything  trashed by the system
+            rewind(f);
+            fprintf(f, "%lli", i);
+            if (j > 10 * 1024 * 1024) {
+                fflush(f);
+                j = 0;
+            }
+         }
+         
+        if (spin == 0) return 0;
 
         if (hang == 0)
         {
@@ -768,6 +796,7 @@ usage (int status)
         "     --vm-bytes B   malloc B bytes per vm worker (default is 256MB)\n"
         "     --vm-stride B  touch a byte every B bytes (default is 4096)\n"
         "     --vm-hang N    sleep N secs before free (default none, 0 is inf)\n"
+        "     --vm-no-spin   do not spin on malloc\n"
         "     --vm-keep      redirty memory instead of freeing and reallocating\n"
         " -d, --hdd N        spawn N workers spinning on write()/unlink()\n"
         "     --hdd-bytes B  write B bytes per hdd worker (default is 1GB)\n\n"
