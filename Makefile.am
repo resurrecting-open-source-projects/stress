@@ -8,3 +8,13 @@ distclean-local:
 	rm -rf autom4te.cache
 	rm -f  aclocal.m4 compile config.* configure depcomp INSTALL install-sh \
                Makefile.in missing src/Makefile.in test-driver test/Makefile.in
+
+man/stress.1: man/stress.txt
+	txt2man -t stress \
+		  -r stress-@PACKAGE_VERSION@ \
+		  -d "@RELEASE_DAY@" \
+		  -s 1 \
+		  -v "tool to impose load on and stress test systems" \
+		  $< > $@
+
+.PHONY: distclean-local

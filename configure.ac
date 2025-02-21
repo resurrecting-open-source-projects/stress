@@ -1,5 +1,6 @@
 AC_PREREQ([2.69])
 AC_INIT([stress], [1.0.7], [https://github.com/resurrecting-open-source-projects/stress/issues])
+AC_SUBST([RELEASE_DAY], ["21 Jan 2023"], [Day of release (used in man page)])
 AC_CONFIG_SRCDIR([src/stress.c])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
@@ -17,6 +18,9 @@ AC_FUNC_FORK
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([alarm sqrt strerror])
 
+# Checks for build helpers
+AC_CHECK_PROG(TXT2MAN_CHECK, txt2man, yes)
+AS_IF([test x"$TXT2MAN_CHECK" != x"yes"], [AC_MSG_ERROR([txt2man tool needed to generate man page])])
 # Special functions
 AC_ARG_ENABLE([static],
                AS_HELP_STRING([--enable-static],

@@ -3,6 +3,7 @@
  * Copyright 2001-2010 Amos Waterland <apw@rossby.metr.ou.edu>
  * Copyright 2021-2023 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
  * Copyright 2023      Vratislav Bendel <vbendel@redhat.com>
+ * Copyright 2025      Marcus Müller <mueller_foss_stress@baseband.digital>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +24,7 @@
 #include <errno.h>
 #include <libgen.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -479,9 +481,47 @@ void worker_init(void)
 int
 hogcpu (void)
 {
-    while (1)
-        sqrt (rand ());
+    /* initial state for PRNG */
+    static uint32_t s[] = {
+        4 /* chosen by fair dice roll */,
+        42 /* the answer */,
+        3 /* pi */,
+        0xCAFECA4E /* because who doesn't like cake? */
+    };
+    while (1) {
+        /* START xoroshirp128plus:
+         Written in 2018 by David Blackman and Sebastiano Vigna (vigna@acm.org)
 
+        To the extent possible under law, the author has dedicated all copyright
+        and related and neighboring rights to this software to the public domain
+        worldwide.
+
+        Permission to use, copy, modify, and/or distribute this software for any
+        purpose with or without fee is hereby granted.
+
+        THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+        WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+        MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+        ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+        WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+        ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+        IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+        */
+
+        const uint32_t result = s[0] + s[3];
+        const uint32_t t = s[1] << 9;
+
+        s[2] ^= s[0];
+        s[3] ^= s[1];
+        s[1] ^= s[2];
+        s[0] ^= s[3];
+
+        s[2] ^= t;
+
+        s[3] = (s[3] << 11) | (s[3]>> (32-11));
+        /* END xoroshirp128plus */
+        volatile double value = sqrt ((double)(result));
+    }
     return 0;
 }
 
@@ -762,7 +802,8 @@ usage (int status)
         " -n, --dry-run      show what would have been done\n"
         " -t, --timeout N    timeout after N seconds\n"
         "     --backoff N    wait factor of N microseconds before work starts\n"
-        " -c, --cpu N        spawn N workers spinning on sqrt()\n"
+        " -c, --cpu N        spawn N workers spinning on pseudo-random number generation\n"
+        "                    and sqrt()\n"
         " -i, --io N         spawn N workers spinning on sync()\n"
         " -m, --vm N         spawn N workers spinning on malloc()/free()\n"
         "     --vm-bytes B   malloc B bytes per vm worker (default is 256MB)\n"

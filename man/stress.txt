@@ -23,7 +23,8 @@ OPTIONS
  -n, --dry-run      Show what would have been done.
  -t, --timeout <N>  Timeout after N seconds. This option is ignored by -n.
  --backoff <N>      Wait for factor of microseconds before starting work.
- -c, --cpu <N>      Spawn N workers spinning on sqrt().
+ -c, --cpu <N>      Spawn N workers spinning on pseudo-random number generation
+                    and sqrt().
  -i, --io <N>       Spawn N workers spinning on sync().
  -m, --vm <N>       Spawn N workers spinning on malloc()/free().
  --vm-bytes <B>     Malloc B bytes per vm worker (default is 256MB).
@@ -39,7 +40,8 @@ OPTIONS
 EXAMPLES
  The simple case is that you just want to bring the system load average up to an
  arbitrary value. The following forks 13 processes, each of which spins in a
- tight loop calculating the sqrt() of a random number acquired with rand().
+ tight loop calculating the sqrt() of a random number acquired from a fixed-seed
+ pseudo-random number generator (xoroshiro128+).
 
     stress -c 13
 
